@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduCoach Pro — Coaching Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c1:#0d0f1c;--c2:#12152b;--c3:#181b35;--acc:#6c63ff;--acc2:#f5a623;
+  --green:#22c55e;--blue:#38bdf8;--red:#f43f5e;--purple:#a78bfa;--orange:#fb923c;
+  --txt:#e8e9f3;--txt2:#7e8299;--card:#161929;--border:#252848;--inp:#1c1f3a;
+  --radius:10px;--font:'Inter',sans-serif
+}
+body{font-family:var(--font);background:var(--c1);color:var(--txt);min-height:100vh;font-size:13px}
+.app{display:flex;min-height:100vh}
+/* ── SIDEBAR ── */
+.sidebar{width:215px;background:var(--c2);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:10}
+.logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.logo .brand{font-size:16px;font-weight:600;color:#fff}
+.logo .sub{font-size:10px;color:var(--txt2);margin-top:2px;letter-spacing:.5px}
+.nav-sec{font-size:9px;color:var(--txt2);padding:12px 18px 4px;text-transform:uppercase;letter-spacing:1.2px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:12px;color:var(--txt2);transition:all .18s;border-left:2px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.03);color:var(--txt)}
+.nav-item.active{background:rgba(108,99,255,.13);color:var(--acc);border-left-color:var(--acc)}
+.nav-ico{width:15px;height:15px;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border)}
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;margin-left:215px}
+.topbar{background:var(--c2);border-bottom:1px solid var(--border);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:5}
+.topbar h1{font-size:14px;font-weight:500;color:#fff}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+.content{flex:1;padding:20px 22px;overflow-y:auto}
+.page{display:none}
+.page.active{display:block}
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat .lbl{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.stat .val{font-size:24px;font-weight:600;color:#fff;line-height:1}
+.stat .hint{font-size:10px;margin-top:4px;color:var(--txt2)}
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.card-ttl{font-size:13px;font-weight:500;color:#fff}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:400px}
+th{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
+.p-green{background:rgba(34,197,94,.15);color:#22c55e}
+.p-red{background:rgba(244,63,94,.15);color:#f43f5e}
+.p-amber{background:rgba(245,166,35,.15);color:#f5a623}
+.p-blue{background:rgba(56,189,248,.15);color:#38bdf8}
+.p-purple{background:rgba(167,139,250,.15);color:#a78bfa}
+.p-gray{background:rgba(126,130,153,.15);color:#7e8299}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .18s;font-family:var(--font)}
+.btn-acc{background:var(--acc);color:#fff}
+.btn-acc:hover{background:#5a52e0}
+.btn-sec{background:var(--inp);color:var(--txt);border:1px solid var(--border)}
+.btn-sec:hover{background:var(--border)}
+.btn-green{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.25)}
+.btn-green:hover{background:rgba(34,197,94,.25)}
+.btn-red{background:rgba(244,63,94,.12);color:#f43f5e;border:1px solid rgba(244,63,94,.2)}
+.btn-red:hover{background:rgba(244,63,94,.22)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-wa{background:#25d366;color:#fff}
+.btn-wa:hover{background:#1eba56}
+.btn-export{background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.2)}
+.btn-export:hover{background:rgba(56,189,248,.22)}
+/* ── FORMS ── */
+.fl{display:flex;align-items:center;gap:8px}
+.fl-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.lbl{font-size:11px;color:var(--txt2);font-weight:500}
+input[type=text],input[type=number],input[type=password],input[type=email],select,textarea{width:100%;background:var(--inp);border:1px solid var(--border);border-radius:7px;padding:8px 11px;color:var(--txt);font-size:12px;font-family:var(--font);outline:none;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+select option{background:var(--c2)}
+/* ── TABS ── */
+.tab-row{display:flex;gap:3px;margin-bottom:14px;background:var(--inp);border-radius:7px;padding:3px;flex-wrap:wrap}
+.tab{padding:5px 14px;border-radius:5px;font-size:12px;cursor:pointer;color:var(--txt2);transition:all .18s;white-space:nowrap}
+.tab.active{background:var(--card);color:#fff}
+/* ── UPLOAD ── */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:26px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s}
+.upload-zone:hover{border-color:var(--acc)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+/* ── NOTIFICATION ── */
+.notif{position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(60px);opacity:0;transition:all .3s;z-index:9999;max-width:300px;line-height:1.4}
+.notif.show{transform:translateY(0);opacity:1}
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--c2);border:1px solid var(--border);border-radius:14px;padding:24px;width:480px;max-width:100%;max-height:90vh;overflow-y:auto}
+.modal-ttl{font-size:15px;font-weight:600;margin-bottom:16px;color:#fff}
+/* ── HW STATUS ── */
+.hw-status-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap}
+.hws-checked{background:rgba(34,197,94,.12);color:#22c55e;border-color:rgba(34,197,94,.3)}
+.hws-unchecked{background:rgba(56,189,248,.12);color:#38bdf8;border-color:rgba(56,189,248,.3)}
+.hws-incomplete{background:rgba(244,63,94,.12);color:#f43f5e;border-color:rgba(244,63,94,.3)}
+.hws-pending{background:rgba(126,130,153,.1);color:var(--txt2);border-color:var(--border)}
+.hw-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+/* ── PROGRESS ── */
+.progress{background:rgba(255,255,255,.07);border-radius:20px;height:5px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;border-radius:20px;transition:width .3s}
+/* ── FILE ITEM ── */
+.file-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--inp);border-radius:8px;border:1px solid var(--border);margin-bottom:8px}
+.file-ico{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+/* ── BATCH CHIP ── */
+.batch-chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;background:rgba(108,99,255,.12);color:var(--acc);border:1px solid rgba(108,99,255,.2)}
+/* ── WA PREVIEW ── */
+.wa-preview{background:rgba(37,211,102,.07);border:1px solid rgba(37,211,102,.2);border-radius:8px;padding:12px;font-size:12px;color:var(--txt);margin-top:10px;border-left:3px solid #25d366;line-height:1.5}
+/* ── LOGIN ── */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--c1);padding:16px}
+.login-card{background:var(--c2);border:1px solid var(--border);border-radius:16px;padding:32px;width:360px;max-width:100%}
+.login-logo{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--txt2);margin-bottom:22px}
+.role-tabs{display:flex;gap:6px;margin-bottom:20px}
+.role-tab{flex:1;padding:8px;border-radius:8px;text-align:center;font-size:12px;cursor:pointer;border:1px solid var(--border);color:var(--txt2);transition:all .2s}
+.role-tab.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+/* ── STUDENT PORTAL ── */
+.sp-header{background:var(--c2);border-bottom:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.sp-content{padding:20px;max-width:820px;margin:0 auto}
+/* ── SEP ── */
+.sep{height:1px;background:var(--border);margin:12px 0}
+.export-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.empty-msg{text-align:center;color:var(--txt2);padding:20px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div class="notif" id="notif"></div>
+
+<!-- ADD STUDENT MODAL -->
+<div class="modal-bg" id="modal-add-student">
+  <div class="modal">
+    <div class="modal-ttl">Add New Student</div>
+    <div class="g2">
+      <div class="fg"><div class="lbl">Full Name *</div><input type="text" id="s-name"></div>
+      <div class="fg"><div class="lbl">Roll No. *</div><input type="text" id="s-roll"></div>
+      <div class="fg"><div class="lbl">Batch / Class *</div><select id="s-batch"></select></div>
+      <div class="fg"><div class="lbl">Subject Group</div>
+        <select id="s-subj"><option>Science Stream</option><option>Commerce</option><option>Arts</option><option>Mathematics</option><option>All Subjects</option></select></div>
+      <div class="fg"><div class="lbl">Parent Phone (WhatsApp)</div><input type="text" id="s-phone" placeholder="+91..."></div>
+      <div class="fg"><div class="lbl">Login Password</div><input type="password" id="s-pass" placeholder="Auto: roll+123"></div>
+    </div>
+    <div class="fl" style="margin-top:6px;gap:8px">
+      <button class="btn btn-acc" onclick="addStudent()" style="flex:1">Add Student</button>
+      <button class="btn btn-sec" onclick="closeModal('modal-add-student')" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- WA MODAL -->
+<div class="modal-bg" id="modal-wa">
+  <div class="modal">
+    <div class="modal-ttl">Send WhatsApp / SMS Alert</div>
+    <div class="fg"><div class="lbl">Send To</div>
+      <select id="wa-to">
+        <option value="all">All Parents</option>
+        <option value="absent">Absent Students' Parents</option>
+        <option value="low">Low Attendance (&lt;75%)</option>
+        <option value="hw">Homework Pending</option>
+      </select>
+    </div>
+    <div class="fg"><div class="lbl">Template</div>
+      <select id="wa-tpl" onchange="updateWAMsg()">
+        <option value="att">Attendance Alert</option>
+        <option value="hw">Homework Reminder</option>
+        <option value="marks">Marks Update</option>
+        <option value="fee">Fee Reminder</option>
+        <option value="custom">Custom Message</option>
+      </select>
+    </div>
+    <div class="fg" id="wa-custom-wrap" style="display:none"><div class="lbl">Your Message</div><textarea id="wa-custom-msg" rows="3" oninput="updateWAMsg()"></textarea></div>
+    <div class="wa-preview" id="wa-msg-preview"></div>
+    <div class="fl" style="margin-top:14px;gap:8px">
+      <button class="btn btn-wa" onclick="doSendWA()" style="flex:1">Send via WhatsApp</button>
+      <button class="btn btn-sec" onclick="doSendSMS()" style="flex:1">Send SMS</button>
+      <button class="btn btn-sec btn-sm" onclick="closeModal('modal-wa')">Cancel</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--txt2)">⚠ Requires WhatsApp Business API / Twilio for real sending.</div>
+  </div>
+</div>
+
+<!-- BATCH MODAL -->
+<div class="modal-bg" id="modal-batch">
+  <div class="modal">
+    <div class="modal-ttl">Manage Batches</div>
+    <div class="fg fl" style="flex-direction:row;gap:8px">
+      <input type="text" id="new-batch-inp" placeholder="e.g. Class 10A, JEE Batch..." style="flex:1">
+      <button class="btn btn-acc btn-sm" onclick="addBatch()">Add</button>
+    </div>
+    <div class="sep"></div>
+    <div id="batch-modal-list"></div>
+    <button class="btn btn-sec" onclick="closeModal('modal-batch')" style="margin-top:14px;width:100%">Done</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA LAYER — localStorage persistence
+// ═══════════════════════════════════════════
+function save(key,val){try{localStorage.setItem('ec_'+key,JSON.stringify(val));}catch(e){}}
+function load(key,def){try{const v=localStorage.getItem('ec_'+key);return v?JSON.parse(v):def;}catch(e){return def;}}
+
+let batches=load('batches',['Class 9A','Class 10A','Class 10B','JEE Batch']);
+let students=load('students',[
+  {id:1,name:'Arjun Sharma',roll:'001',batch:'Class 10A',subj:'Science Stream',phone:'9876543210',pass:'arjun123'},
+  {id:2,name:'Priya Patel',roll:'002',batch:'Class 10A',subj:'Science Stream',phone:'9876543211',pass:'priya123'},
+  {id:3,name:'Rahul Singh',roll:'003',batch:'Class 10B',subj:'Commerce',phone:'9876543212',pass:'rahul123'},
+  {id:4,name:'Sneha Gupta',roll:'004',batch:'JEE Batch',subj:'Science Stream',phone:'9876543213',pass:'sneha123'},
+  {id:5,name:'Karan Mehta',roll:'005',batch:'Class 9A',subj:'Mathematics',phone:'9876543214',pass:'karan123'},
+]);
+let marksData=load('marks',[]);
+let attData=load('att',[]);
+let hwData=load('hw',[]);
+let worksheets=load('ws',[]);
+
+function persist(){save('batches',batches);save('students',students);save('marks',marksData);save('att',attData);save('hw',hwData);save('ws',worksheets);}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+let currentUser={role:'login'};
+
+const waMsgs={
+  att:'Dear Parent, your child was marked ABSENT today at EduCoach. Kindly ensure regular attendance. Thank you.',
+  hw:'Dear Parent, your child has PENDING homework due. Please ensure it is completed on time. — EduCoach',
+  marks:'Dear Parent, test results are now available. Please login to the student portal to check. — EduCoach',
+  fee:'Dear Parent, coaching fees for this month are due. Kindly contact us for payment. — EduCoach',
+  custom:''
+};
+const hwStatusLabel={checked:'✓ Checked',unchecked:'⊘ Not Checked',incomplete:'✗ Not Completed',pending:'— Pending'};
+const hwStatusClass={checked:'hws-checked',unchecked:'hws-unchecked',incomplete:'hws-incomplete',pending:'hws-pending'};
+const hwStatusNext={pending:'checked',checked:'unchecked',unchecked:'incomplete',incomplete:'pending'};
+const hwDotColor={checked:'#22c55e',unchecked:'#38bdf8',incomplete:'#f43f5e',pending:'#7e8299'};
+
+function getGrade(pct){
+  if(pct>=90)return{g:'A+',c:'#22c55e'};if(pct>=80)return{g:'A',c:'#22c55e'};
+  if(pct>=70)return{g:'B',c:'#38bdf8'};if(pct>=60)return{g:'C',c:'#f5a623'};
+  if(pct>=50)return{g:'D',c:'#fb923c'};return{g:'F',c:'#f43f5e'};
+}
+function getSAtt(id){const r=attData.filter(a=>a.sid===id);if(!r.length)return 0;return Math.round(r.filter(a=>a.status==='P').length/r.length*100);}
+function getSAvg(id){const r=marksData.filter(m=>m.sid===id);if(!r.length)return 0;return Math.round(r.reduce((s,m)=>s+(m.marks/m.total*100),0)/r.length);}
+function today(){return new Date().toLocaleDateString('en-IN');}
+
+function notif(msg,col='#22c55e'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.style.background=col;n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),3200);
+}
+function openModal(id){document.getElementById(id)?.classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+
+// ═══════════════════════════════════════════
+// RENDER ROOT
+// ═══════════════════════════════════════════
+function renderApp(){
+  if(currentUser.role==='login'){renderLogin();return;}
+  if(currentUser.role==='student'){renderStudentPortal();return;}
+  renderAdmin();
+}
+
+// ═══════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════
+let loginRole='admin';
+function renderLogin(){
+  document.getElementById('root').innerHTML=`
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">🎓 EduCoach Pro</div>
+      <div class="login-sub">Coaching Management Portal</div>
+      <div class="role-tabs">
+        <div class="role-tab active" id="rt-admin" onclick="setLoginRole('admin')">Admin / Teacher</div>
+        <div class="role-tab" id="rt-student" onclick="setLoginRole('student')">Student Login</div>
+      </div>
+      <div id="login-form"></div>
+    </div>
+  </div>`;
+  setLoginRole('admin');
+}
+
+function setLoginRole(r){
+  loginRole=r;
+  document.querySelectorAll('.role-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rt-'+r)?.classList.add('active');
+  const f=document.getElementById('login-form');
+  if(r==='admin'){
+    f.innerHTML=`
+      <div class="fg"><div class="lbl">Username</div><input type="text" id="l-user" value="admin" autocomplete="off"></div>
+      <div class="fg"><div class="lbl">Password</div><input type="password" id="l-pass" value="admin123"></div>
+      <button class="btn btn-acc" onclick="doLoginAdmin()" style="width:100%;justify-content:center;margin-top:4px">Login as Teacher</button>
+      <div style="margin-top:12px;font-size:11px;color:var(--txt2);text-align:center">Default: admin / admin123</div>`;
+  } else {
+    f.innerHTML=`
+      <div class="fg"><div class="lbl">Roll Number</div><input type="text" id="l-roll" autocomplete="off"></div>
+      <div class="fg"><div class="lbl">Password</div><input type="password" id="l-spass"></div>
+      <button class="btn btn-acc" onclick="doLoginStudent()" style="width:100%;justify-content:center;margin-top:4px">Login as Student</button>
+      <div style="margin-top:12px;font-size:11px;color:var(--txt2);text-align:center">Demo: roll 001, pass arjun123</div>`;
+  }
+}
+
+function doLoginAdmin(){
+  const u=document.getElementById('l-user')?.value.trim();
+  const p=document.getElementById('l-pass')?.value.trim();
+  if(u==='admin'&&p==='admin123'){currentUser={role:'admin'};renderApp();}
+  else notif('Wrong credentials','#f43f5e');
+}
+function doLoginStudent(){
+  const roll=document.getElementById('l-roll')?.value.trim();
+  const pass=document.getElementById('l-spass')?.value.trim();
+  const s=students.find(st=>st.roll===roll&&st.pass===pass);
+  if(s){currentUser={role:'student',student:s};renderApp();}
+  else notif('Wrong roll number or password','#f43f5e');
+}
+
+// ═══════════════════════════════════════════
+// STUDENT PORTAL
+// ═══════════════════════════════════════════
+function renderStudentPortal(){
+  const s=currentUser.student;
+  const myMarks=marksData.filter(m=>m.sid===s.id);
+  const myAtt=attData.filter(a=>a.sid===s.id);
+  const myWS=worksheets.filter(w=>w.batch===s.batch||w.batch==='All Batches');
+  const myHW=hwData.filter(h=>h.batch===s.batch);
+  const attPct=myAtt.length?Math.round(myAtt.filter(a=>a.status==='P').length/myAtt.length*100):0;
+  const avgPct=myMarks.length?Math.round(myMarks.reduce((acc,m)=>acc+(m.marks/m.total*100),0)/myMarks.length):0;
+
+  document.getElementById('root').innerHTML=`
+  <div style="min-height:100vh;background:var(--c1)">
+    <div class="sp-header">
+      <div class="fl">
+        <div class="avatar">${s.name[0].toUpperCase()}</div>
+        <div>
+          <div style="font-weight:600;font-size:14px;color:#fff">${s.name}</div>
+          <div style="font-size:11px;color:var(--txt2)">${s.batch} · Roll No. ${s.roll}</div>
+        </div>
+      </div>
+      <button class="btn btn-sec btn-sm" onclick="currentUser={role:'login'};renderApp()">Logout</button>
+    </div>
+    <div class="sp-content">
+      <div class="stats-row" style="margin-top:4px">
+        <div class="stat"><div class="lbl">Attendance</div><div class="val" style="color:${attPct>=75?'#22c55e':'#f43f5e'}">${attPct}%</div><div class="hint">${attPct>=75?'Good':'Needs improvement'}</div></div>
+        <div class="stat"><div class="lbl">Avg Marks</div><div class="val">${avgPct||'—'}${avgPct?'%':''}</div></div>
+        <div class="stat"><div class="lbl">Worksheets</div><div class="val">${myWS.length}</div></div>
+        <div class="stat"><div class="lbl">Homework</div><div class="val">${myHW.length}</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-ttl">📊 My Marks</span></div>
+        ${myMarks.length?`<div class="tbl-wrap"><table>
+          <thead><tr><th>Exam</th><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead>
+          <tbody>${myMarks.map(m=>{const pct=Math.round(m.marks/m.total*100);const{g,c}=getGrade(pct);
+            return`<tr><td>${m.exam}</td><td>${m.subj}</td><td>${m.marks}/${m.total}</td><td>${pct}%</td><td style="color:${c};font-weight:600">${g}</td></tr>`;
+          }).join('')}</tbody>
+        </table></div>`:'<div class="empty-msg">No marks published yet</div>'}
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-ttl">📝 My Homework</span></div>
+        ${myHW.length?myHW.map(hw=>{
+          const comp=hw.completions?.[s.id]||'pending';
+          const chk=hw.hwStatus?.[s.id]||'pending';
+          return`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div class="fl" style="justify-content:space-between;flex-wrap:wrap;gap:6px">
+              <div>
+                <div style="font-weight:500">${hw.title}</div>
+                <div style="font-size:11px;color:var(--txt2)">${hw.subj} · Due: ${hw.due}</div>
+              </div>
+              <div class="fl">
+                <span class="pill ${comp==='done'?'p-green':'p-amber'}">${comp==='done'?'Submitted':'Pending'}</span>
+                <span class="hw-status-btn ${hwStatusClass[chk]}" style="margin-left:4px">
+                  <span class="hw-dot" style="background:${hwDotColor[chk]}"></span>${hwStatusLabel[chk]}
+                </span>
+              </div>
+            </div>
+          </div>`;
+        }).join(''):'<div class="empty-msg">No homework assigned yet</div>'}
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><span class="card-ttl">📄 Worksheets</span></div>
+        ${myWS.length?myWS.map(w=>`
+          <div class="file-item">
+            <div class="file-ico" style="background:rgba(244,63,94,.12);color:#f43f5e">${w.ext}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:500">${w.title}</div>
+              <div style="font-size:11px;color:var(--txt2)">${w.subj} · ${w.date}</div>
+            </div>
+            <span class="pill p-blue">Available</span>
+          </div>`).join(''):'<div class="empty-msg">No worksheets uploaded yet</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+// ADMIN LAYOUT
+// ═══════════════════════════════════════════
+let activePage='dashboard';
+function renderAdmin(){
+  document.getElementById('root').innerHTML=`
+  <div class="app">
+    <div class="sidebar">
+      <div class="logo"><div class="brand">🎓 EduCoach Pro</div><div class="sub">TEACHER PORTAL</div></div>
+      <div class="nav-sec">Main</div>
+      <div class="nav-item active" id="nav-dashboard" onclick="goPage('dashboard',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="nav-item" id="nav-students" onclick="goPage('students',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</div>
+      <div class="nav-item" id="nav-batches" onclick="goPage('batches',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Batches</div>
+      <div class="nav-sec">Academic</div>
+      <div class="nav-item" id="nav-marks" onclick="goPage('marks',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Marks</div>
+      <div class="nav-item" id="nav-attendance" onclick="goPage('attendance',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Attendance</div>
+      <div class="nav-item" id="nav-homework" onclick="goPage('homework',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Homework</div>
+      <div class="nav-item" id="nav-worksheets" onclick="goPage('worksheets',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Worksheets</div>
+      <div class="nav-sec">Tools</div>
+      <div class="nav-item" id="nav-alerts" onclick="goPage('alerts',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.64 3.45 2 2 0 0 1 3.63 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6z"/></svg>WA / SMS Alerts</div>
+      <div class="nav-item" id="nav-export" onclick="goPage('export',this)">
+        <svg class="nav-ico" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Reports</div>
+      <div class="sidebar-footer">
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:8px">Logged in as Admin</div>
+        <button class="btn btn-sec btn-sm" onclick="currentUser={role:'login'};renderApp()" style="width:100%;justify-content:center">Logout</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h1 id="page-title">Dashboard</h1>
+        <div class="topbar-right">
+          <button class="btn btn-wa btn-sm" onclick="openModal('modal-wa');updateWAMsg()">💬 WA Alert</button>
+          <button class="btn btn-export btn-sm" onclick="goPage('export',document.getElementById('nav-export'))">↓ Export</button>
+          <div class="avatar">A</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="page active" id="page-dashboard"></div>
+        <div class="page" id="page-students"></div>
+        <div class="page" id="page-batches"></div>
+        <div class="page" id="page-marks"></div>
+        <div class="page" id="page-attendance"></div>
+        <div class="page" id="page-homework"></div>
+        <div class="page" id="page-worksheets"></div>
+        <div class="page" id="page-alerts"></div>
+        <div class="page" id="page-export"></div>
+      </div>
+    </div>
+  </div>`;
+  goPage('dashboard',document.getElementById('nav-dashboard'));
+}
+
+function goPage(name,el){
+  activePage=name;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard',students:'Students',batches:'Batches & Classes',marks:'Marks',attendance:'Attendance',homework:'Homework Tracker',worksheets:'Worksheets Library',alerts:'WhatsApp / SMS Alerts',export:'Export Reports'};
+  const t=document.getElementById('page-title');
+  if(t)t.textContent=titles[name]||name;
+  ({dashboard:renderDash,students:renderStudents,batches:renderBatches,marks:renderMarks,attendance:renderAtt,homework:renderHW,worksheets:renderWS,alerts:renderAlerts,export:renderExport})[name]?.();
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+function renderDash(){
+  const pg=document.getElementById('page-dashboard');
+  const attPct=attData.length?Math.round(attData.filter(a=>a.status==='P').length/attData.length*100):0;
+  const hwTotal=hwData.reduce((s,h)=>s+Object.keys(h.completions||{}).length,0);
+  const hwDone=hwData.reduce((s,h)=>s+Object.values(h.completions||{}).filter(v=>v==='done').length,0);
+  const hwPct=hwTotal?Math.round(hwDone/hwTotal*100):0;
+  pg.innerHTML=`
+    <div class="stats-row">
+      <div class="stat"><div class="lbl">Total Students</div><div class="val">${students.length}</div><div class="hint">${batches.length} batches</div></div>
+      <div class="stat"><div class="lbl">Avg Attendance</div><div class="val" style="color:${attPct>=75?'#22c55e':'#f43f5e'}">${attPct||'—'}${attPct?'%':''}</div></div>
+      <div class="stat"><div class="lbl">HW Completion</div><div class="val">${hwPct||'—'}${hwPct?'%':''}</div></div>
+      <div class="stat"><div class="lbl">Worksheets</div><div class="val">${worksheets.length}</div></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-hd"><span class="card-ttl">Recent Marks</span><button class="btn btn-sec btn-sm" onclick="goPage('marks',document.getElementById('nav-marks'))">View All</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Student</th><th>Exam</th><th>Score</th><th>Grade</th></tr></thead><tbody>
+          ${marksData.slice(-5).reverse().map(m=>{const pct=Math.round(m.marks/m.total*100);const{g,c}=getGrade(pct);return`<tr><td>${m.sname}</td><td>${m.exam}</td><td>${m.marks}/${m.total}</td><td style="color:${c};font-weight:600">${g}</td></tr>`;}).join('')||`<tr><td colspan="4" class="empty-msg">No marks yet</td></tr>`}
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><span class="card-ttl">Batches Overview</span><button class="btn btn-sec btn-sm" onclick="openModal('modal-batch');renderBatchModal()">Manage</button></div>
+        ${batches.map(b=>{const cnt=students.filter(s=>s.batch===b).length;return`<div class="fl" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="batch-chip">${b}</span><span style="margin-left:auto;color:var(--txt2);font-size:11px">${cnt} students</span></div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-ttl">Recent Worksheets</span><button class="btn btn-acc btn-sm" onclick="goPage('worksheets',document.getElementById('nav-worksheets'))">+ Upload</button></div>
+      ${worksheets.slice(-4).reverse().map(w=>`<div class="file-item"><div class="file-ico" style="background:rgba(244,63,94,.12);color:#f43f5e">${w.ext}</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${w.title}</div><div style="font-size:11px;color:var(--txt2)">${w.subj} · ${w.batch} · ${w.date}</div></div></div>`).join('')||'<div class="empty-msg">No worksheets yet</div>'}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+// STUDENTS
+// ═══════════════════════════════════════════
+function renderStudents(){
+  const pg=document.getElementById('page-students');
+  pg.innerHTML=`
+    <div class="fl-wrap" style="margin-bottom:14px">
+      <button class="btn btn-acc" onclick="openAddStudentModal()">+ Add Student</button>
+      <input type="text" id="s-search" placeholder="Search name / roll..." style="width:180px" oninput="renderStudentsTable()">
+      <select id="s-filter-batch" style="width:160px" onchange="renderStudentsTable()">
+        <option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}
+      </select>
+      <button class="btn btn-wa btn-sm" onclick="openModal('modal-wa');updateWAMsg()">WA Alert</button>
+    </div>
+    <div class="card"><div class="tbl-wrap">
+      <table><thead><tr><th>#</th><th>Name</th><th>Roll</th><th>Batch</th><th>Attendance</th><th>Avg Marks</th><th>Parent Phone</th><th>Action</th></tr></thead>
+      <tbody id="students-tbody"></tbody></table>
+    </div></div>`;
+  renderStudentsTable();
+}
+
+function renderStudentsTable(){
+  const q=(document.getElementById('s-search')?.value||'').toLowerCase();
+  const fb=document.getElementById('s-filter-batch')?.value||'';
+  const list=students.filter(s=>(s.name.toLowerCase().includes(q)||s.roll.includes(q))&&(!fb||s.batch===fb));
+  const tb=document.getElementById('students-tbody');if(!tb)return;
+  tb.innerHTML=list.map((s,i)=>{
+    const att=getSAtt(s.id),avg=getSAvg(s.id);
+    return`<tr>
+      <td style="color:var(--txt2)">${i+1}</td>
+      <td style="font-weight:500">${s.name}</td>
+      <td style="font-size:11px;color:var(--txt2)">${s.roll}</td>
+      <td><span class="batch-chip">${s.batch}</span></td>
+      <td><span class="pill ${att>=75?'p-green':att>=60?'p-amber':'p-red'}">${att||0}%</span></td>
+      <td>${avg?avg+'%':'—'}</td>
+      <td style="font-size:11px;color:var(--txt2)">${s.phone||'—'}</td>
+      <td><button class="btn btn-red btn-sm" onclick="delStudent(${s.id})">Remove</button></td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="8" class="empty-msg">No students found</td></tr>`;
+}
+
+function openAddStudentModal(){
+  const sel=document.getElementById('s-batch');
+  if(sel)sel.innerHTML=batches.map(b=>`<option>${b}</option>`).join('');
+  openModal('modal-add-student');
+}
+
+function addStudent(){
+  const name=document.getElementById('s-name')?.value.trim();
+  const roll=document.getElementById('s-roll')?.value.trim();
+  if(!name||!roll){notif('Name and Roll No. required','#f43f5e');return;}
+  if(students.find(s=>s.roll===roll)){notif('Roll number already exists','#f43f5e');return;}
+  const newS={id:Date.now(),name,roll,
+    batch:document.getElementById('s-batch')?.value||batches[0],
+    subj:document.getElementById('s-subj')?.value||'All Subjects',
+    phone:document.getElementById('s-phone')?.value||'',
+    pass:document.getElementById('s-pass')?.value||roll+'123'};
+  students.push(newS);persist();
+  closeModal('modal-add-student');notif('Student added ✓');
+  ['s-name','s-roll','s-phone','s-pass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  if(activePage==='students')renderStudentsTable();
+  if(activePage==='dashboard')renderDash();
+}
+
+function delStudent(id){
+  if(!confirm('Remove this student?'))return;
+  students=students.filter(s=>s.id!==id);persist();
+  renderStudentsTable();notif('Student removed','#f43f5e');
+}
+
+// ═══════════════════════════════════════════
+// BATCHES
+// ═══════════════════════════════════════════
+function renderBatches(){
+  const pg=document.getElementById('page-batches');
+  pg.innerHTML=`
+    <div class="g2">
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">Create New Batch</div>
+        <div class="fg"><div class="lbl">Batch Name</div><input type="text" id="nb-name" placeholder="e.g. Class 10A, JEE Morning Batch..."></div>
+        <button class="btn btn-acc" onclick="addBatch2()" style="width:100%;justify-content:center">Create Batch</button>
+      </div>
+      <div class="card"><div class="card-ttl" style="margin-bottom:12px">All Batches</div><div id="batches-list"></div></div>
+    </div>`;
+  renderBatchesList();
+}
+
+function renderBatchesList(){
+  const el=document.getElementById('batches-list');if(!el)return;
+  el.innerHTML=batches.map(b=>{
+    const cnt=students.filter(s=>s.batch===b).length;
+    return`<div class="fl" style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-weight:500">${b}</div><div style="font-size:11px;color:var(--txt2)">${cnt} student${cnt!==1?'s':''}</div></div>
+      <button class="btn btn-red btn-sm" style="margin-left:auto" onclick="deleteBatch('${b.replace(/'/g,"\\'")}')">Delete</button>
+    </div>`;
+  }).join('')||'<div class="empty-msg">No batches yet</div>';
+}
+
+function addBatch2(){
+  const n=document.getElementById('nb-name')?.value.trim();
+  if(!n){notif('Enter a batch name','#f43f5e');return;}
+  if(batches.includes(n)){notif('Batch already exists','#f43f5e');return;}
+  batches.push(n);persist();
+  const el=document.getElementById('nb-name');if(el)el.value='';
+  renderBatchesList();notif('Batch created ✓');
+}
+
+function deleteBatch(b){
+  if(students.some(s=>s.batch===b)){notif('Move students to another batch first','#f43f5e');return;}
+  if(!confirm(`Delete batch "${b}"?`))return;
+  batches=batches.filter(x=>x!==b);persist();
+  renderBatchesList();notif('Batch deleted','#f43f5e');
+}
+
+function addBatch(){
+  const n=document.getElementById('new-batch-inp')?.value.trim();
+  if(!n||batches.includes(n)){notif(n?'Already exists':'Enter a name','#f43f5e');return;}
+  batches.push(n);persist();
+  const el=document.getElementById('new-batch-inp');if(el)el.value='';
+  renderBatchModal();notif('Batch added ✓');
+}
+
+function renderBatchModal(){
+  const el=document.getElementById('batch-modal-list');if(!el)return;
+  el.innerHTML=batches.map(b=>{const cnt=students.filter(s=>s.batch===b).length;
+    return`<div class="fl" style="padding:8px 0;border-bottom:1px solid var(--border)"><span>${b}</span><span style="margin-left:auto;color:var(--txt2);font-size:11px">${cnt} students</span></div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// MARKS
+// ═══════════════════════════════════════════
+function renderMarks(){
+  const pg=document.getElementById('page-marks');
+  pg.innerHTML=`
+    <div class="tab-row">
+      <div class="tab active" id="mt-enter" onclick="switchTab('marks','enter',this)">Enter Marks</div>
+      <div class="tab" id="mt-view" onclick="switchTab('marks','view',this)">View Records</div>
+    </div>
+    <div id="marks-enter">
+      <div class="g2">
+        <div class="card">
+          <div class="card-ttl" style="margin-bottom:12px">Exam Details</div>
+          <div class="fg"><div class="lbl">Exam / Test Name *</div><input type="text" id="exam-name" placeholder="Unit Test 1, Mid Term..."></div>
+          <div class="fg"><div class="lbl">Subject</div>
+            <select id="m-subj"><option>Mathematics</option><option>Science</option><option>English</option><option>Hindi</option><option>Social Studies</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Computer Science</option></select></div>
+          <div class="fg"><div class="lbl">Batch</div>
+            <select id="m-batch" onchange="renderMarksEntry()">${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+          <div class="fg"><div class="lbl">Total Marks</div><input type="number" id="m-total" value="100"></div>
+          <div class="fg"><div class="lbl">Date</div><input type="text" id="m-date" placeholder="DD/MM/YYYY"></div>
+          <button class="btn btn-acc" onclick="saveMarks()" style="width:100%;justify-content:center;margin-top:4px">💾 Save Marks</button>
+        </div>
+        <div class="card">
+          <div class="card-ttl" style="margin-bottom:12px">Student Scores</div>
+          <div class="tbl-wrap"><table><thead><tr><th>Student</th><th>Marks</th><th>Grade</th></tr></thead><tbody id="marks-entry-body"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+    <div id="marks-view" style="display:none">
+      <div class="fl-wrap" style="margin-bottom:12px;gap:8px">
+        <select id="mv-exam" style="width:200px" onchange="renderMarksView()"><option value="">All Exams</option></select>
+        <select id="mv-batch" style="width:160px" onchange="renderMarksView()"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select>
+      </div>
+      <div class="card"><div class="tbl-wrap">
+        <table><thead><tr><th>Student</th><th>Batch</th><th>Exam</th><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead>
+        <tbody id="marks-view-body"></tbody></table>
+      </div></div>
+    </div>`;
+  renderMarksEntry();
+}
+
+function renderMarksEntry(){
+  const batch=document.getElementById('m-batch')?.value||batches[0];
+  const list=students.filter(s=>s.batch===batch);
+  const tb=document.getElementById('marks-entry-body');if(!tb)return;
+  tb.innerHTML=list.map(s=>`<tr>
+    <td>${s.name}</td>
+    <td><input type="number" style="width:65px;text-align:center;padding:5px 6px" id="mi-${s.id}" min="0" max="200" placeholder="—" oninput="updateGradeCell(${s.id})"></td>
+    <td id="mg-${s.id}" style="color:var(--txt2);font-weight:500">—</td>
+  </tr>`).join('')||`<tr><td colspan="3" class="empty-msg">No students in this batch</td></tr>`;
+}
+
+function updateGradeCell(id){
+  const v=parseFloat(document.getElementById('mi-'+id)?.value);
+  const tot=parseFloat(document.getElementById('m-total')?.value)||100;
+  if(isNaN(v)){const el=document.getElementById('mg-'+id);if(el){el.textContent='—';el.style.color='var(--txt2)';}return;}
+  const{g,c}=getGrade(v/tot*100);
+  const el=document.getElementById('mg-'+id);if(el){el.textContent=g;el.style.color=c;}
+}
+
+function saveMarks(){
+  const exam=document.getElementById('exam-name')?.value.trim();
+  const subj=document.getElementById('m-subj')?.value;
+  const total=parseFloat(document.getElementById('m-total')?.value)||100;
+  const date=document.getElementById('m-date')?.value||today();
+  const batch=document.getElementById('m-batch')?.value||batches[0];
+  if(!exam){notif('Enter exam name','#f43f5e');return;}
+  let cnt=0;
+  students.filter(s=>s.batch===batch).forEach(s=>{
+    const v=document.getElementById('mi-'+s.id)?.value;
+    if(v!==''&&v!==undefined&&v!==null&&v.length>0){
+      marksData.push({sid:s.id,sname:s.name,batch,exam,subj,marks:parseFloat(v),total,date});cnt++;
+    }
+  });
+  persist();
+  notif(cnt?`✓ Saved for ${cnt} students`:'No scores entered — fill marks first',cnt?'#22c55e':'#f43f5e');
+}
+
+function switchTab(scope,tab,el){
+  if(scope==='marks'){
+    document.querySelectorAll('#page-marks .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+    document.getElementById('marks-enter').style.display=tab==='enter'?'block':'none';
+    document.getElementById('marks-view').style.display=tab==='view'?'block':'none';
+    if(tab==='view')renderMarksView();
+  }
+  if(scope==='att'){
+    document.querySelectorAll('#page-attendance .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+    document.getElementById('att-mark').style.display=tab==='mark'?'block':'none';
+    document.getElementById('att-report').style.display=tab==='report'?'block':'none';
+    if(tab==='report')renderAttReport();
+  }
+  if(scope==='hw'){
+    document.querySelectorAll('#page-homework .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+    document.getElementById('hw-assign').style.display=tab==='assign'?'block':'none';
+    document.getElementById('hw-track').style.display=tab==='track'?'block':'none';
+    if(tab==='track')renderHWList();
+  }
+}
+
+function renderMarksView(){
+  const sel=document.getElementById('mv-exam');
+  if(sel){const exams=[...new Set(marksData.map(m=>m.exam))];const cur=sel.value;sel.innerHTML='<option value="">All Exams</option>'+exams.map(e=>`<option ${e===cur?'selected':''}>${e}</option>`).join('');}
+  const fe=document.getElementById('mv-exam')?.value||'';
+  const fb=document.getElementById('mv-batch')?.value||'';
+  const list=marksData.filter(m=>(!fe||m.exam===fe)&&(!fb||m.batch===fb));
+  const tb=document.getElementById('marks-view-body');if(!tb)return;
+  tb.innerHTML=list.map(m=>{
+    const pct=Math.round(m.marks/m.total*100);const{g,c}=getGrade(pct);
+    return`<tr><td>${m.sname}</td><td><span class="batch-chip" style="font-size:10px">${m.batch}</span></td><td>${m.exam}</td><td>${m.subj}</td><td>${m.marks}/${m.total}</td><td>${pct}%</td><td style="color:${c};font-weight:600">${g}</td></tr>`;
+  }).join('')||`<tr><td colspan="7" class="empty-msg">No records found</td></tr>`;
+}
+
+// ═══════════════════════════════════════════
+// ATTENDANCE
+// ═══════════════════════════════════════════
+let attSessionStatus={};
+
+function renderAtt(){
+  const pg=document.getElementById('page-attendance');
+  pg.innerHTML=`
+    <div class="tab-row">
+      <div class="tab active" onclick="switchTab('att','mark',this)">Mark Attendance</div>
+      <div class="tab" onclick="switchTab('att','report',this)">Report</div>
+    </div>
+    <div id="att-mark">
+      <div class="card" style="margin-bottom:12px">
+        <div class="fl-wrap" style="gap:10px">
+          <div class="fg" style="margin:0;flex:1"><div class="lbl">Date</div><input type="text" id="att-date" placeholder="DD/MM/YYYY" style="min-width:130px" value="${today()}"></div>
+          <div class="fg" style="margin:0;flex:1"><div class="lbl">Subject</div>
+            <select id="att-subj" style="min-width:130px"><option>Mathematics</option><option>Science</option><option>English</option><option>Hindi</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Social Studies</option></select></div>
+          <div class="fg" style="margin:0;flex:1"><div class="lbl">Batch</div>
+            <select id="att-batch" style="min-width:130px" onchange="renderAttTable()">${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+          <div style="display:flex;gap:6px;margin-top:18px">
+            <button class="btn btn-green btn-sm" onclick="markAll('P')">All Present</button>
+            <button class="btn btn-red btn-sm" onclick="markAll('A')">All Absent</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Student</th><th>Status</th><th>Mark</th></tr></thead><tbody id="att-tbody"></tbody></table></div>
+        <button class="btn btn-acc" onclick="saveAtt()" style="margin-top:12px">💾 Save Attendance</button>
+      </div>
+    </div>
+    <div id="att-report" style="display:none">
+      <div class="fl-wrap" style="margin-bottom:12px;gap:8px">
+        <select id="ar-batch" style="width:180px" onchange="renderAttReport()"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select>
+        <button class="btn btn-export btn-sm" onclick="exportCSV('att')">↓ Export CSV</button>
+      </div>
+      <div class="card"><div class="tbl-wrap">
+        <table><thead><tr><th>Student</th><th>Batch</th><th>Total</th><th>Present</th><th>Absent</th><th>%</th><th>Status</th></tr></thead>
+        <tbody id="att-report-body"></tbody></table>
+      </div></div>
+    </div>`;
+  attSessionStatus={};
+  renderAttTable();
+}
+
+function renderAttTable(){
+  const batch=document.getElementById('att-batch')?.value||batches[0];
+  const list=students.filter(s=>s.batch===batch);
+  const tb=document.getElementById('att-tbody');if(!tb)return;
+  attSessionStatus={};
+  tb.innerHTML=list.map((s,i)=>{
+    attSessionStatus[s.id]='';
+    return`<tr>
+      <td style="color:var(--txt2)">${i+1}</td>
+      <td style="font-weight:500">${s.name}</td>
+      <td id="as-${s.id}"><span class="pill p-gray">—</span></td>
+      <td>
+        <div class="fl" style="gap:5px">
+          <button class="btn btn-green btn-sm" onclick="setAtt(${s.id},'P')">P</button>
+          <button class="btn btn-red btn-sm" onclick="setAtt(${s.id},'A')">A</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="4" class="empty-msg">No students in this batch</td></tr>`;
+}
+
+function setAtt(id,status){
+  attSessionStatus[id]=status;
+  const el=document.getElementById('as-'+id);
+  if(el)el.innerHTML=status==='P'?'<span class="pill p-green">Present</span>':'<span class="pill p-red">Absent</span>';
+}
+
+function markAll(status){
+  const batch=document.getElementById('att-batch')?.value||batches[0];
+  students.filter(s=>s.batch===batch).forEach(s=>setAtt(s.id,status));
+}
+
+function saveAtt(){
+  const date=document.getElementById('att-date')?.value||today();
+  const subj=document.getElementById('att-subj')?.value;
+  const batch=document.getElementById('att-batch')?.value||batches[0];
+  const list=students.filter(s=>s.batch===batch);
+  let cnt=0;
+  list.forEach(s=>{
+    const status=attSessionStatus[s.id];
+    if(!status)return;
+    attData=attData.filter(a=>!(a.sid===s.id&&a.date===date&&a.subj===subj));
+    attData.push({sid:s.id,sname:s.name,batch,date,subj,status});cnt++;
+  });
+  persist();notif(cnt?`✓ Attendance saved for ${cnt} students`:'No attendance marked — tap P or A first',cnt?'#22c55e':'#f43f5e');
+}
+
+function renderAttReport(){
+  const fb=document.getElementById('ar-batch')?.value||'';
+  const list=students.filter(s=>!fb||s.batch===fb);
+  const tb=document.getElementById('att-report-body');if(!tb)return;
+  tb.innerHTML=list.map(s=>{
+    const r=attData.filter(a=>a.sid===s.id);
+    const tot=r.length,pres=r.filter(a=>a.status==='P').length,abs=tot-pres;
+    const pct=tot?Math.round(pres/tot*100):0;
+    const{lbl,cls}=pct>=75?{lbl:'Regular',cls:'p-green'}:pct>=60?{lbl:'At Risk',cls:'p-amber'}:{lbl:'Low',cls:'p-red'};
+    return`<tr><td style="font-weight:500">${s.name}</td><td><span class="batch-chip" style="font-size:10px">${s.batch}</span></td><td>${tot}</td><td style="color:#22c55e">${pres}</td><td style="color:#f43f5e">${abs}</td><td>${pct}%</td><td><span class="pill ${cls}">${lbl}</span></td></tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// HOMEWORK
+// ═══════════════════════════════════════════
+function renderHW(){
+  const pg=document.getElementById('page-homework');
+  pg.innerHTML=`
+    <div class="tab-row">
+      <div class="tab active" onclick="switchTab('hw','assign',this)">Assign Homework</div>
+      <div class="tab" onclick="switchTab('hw','track',this)">Track & Check Status</div>
+    </div>
+    <div id="hw-assign">
+      <div class="card" style="max-width:520px">
+        <div class="card-ttl" style="margin-bottom:12px">New Homework Assignment</div>
+        <div class="fg"><div class="lbl">Title / Topic *</div><input type="text" id="hw-title" placeholder="Chapter 3 exercise, Essay on..."></div>
+        <div class="fg"><div class="lbl">Subject</div>
+          <select id="hw-subj"><option>Mathematics</option><option>Science</option><option>English</option><option>Hindi</option><option>Social Studies</option><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div>
+        <div class="g2">
+          <div class="fg"><div class="lbl">Batch</div><select id="hw-batch">${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+          <div class="fg"><div class="lbl">Due Date</div><input type="text" id="hw-due" placeholder="DD/MM/YYYY"></div>
+        </div>
+        <div class="fg"><div class="lbl">Notes / Instructions</div><textarea id="hw-notes" rows="2" placeholder="Any special instructions..."></textarea></div>
+        <button class="btn btn-acc" onclick="createHW()" style="width:100%;justify-content:center">Create Assignment</button>
+      </div>
+    </div>
+    <div id="hw-track" style="display:none">
+      <div id="hw-list"></div>
+    </div>`;
+}
+
+function createHW(){
+  const title=document.getElementById('hw-title')?.value.trim();
+  if(!title){notif('Enter homework title','#f43f5e');return;}
+  const batch=document.getElementById('hw-batch')?.value||batches[0];
+  const hw={id:Date.now(),title,subj:document.getElementById('hw-subj')?.value,batch,due:document.getElementById('hw-due')?.value||'—',notes:document.getElementById('hw-notes')?.value||'',completions:{},hwStatus:{}};
+  students.filter(s=>s.batch===batch).forEach(s=>{hw.completions[s.id]='pending';hw.hwStatus[s.id]='pending';});
+  hwData.push(hw);persist();
+  notif('✓ Homework assigned');
+  ['hw-title','hw-due','hw-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+function renderHWList(){
+  const list=document.getElementById('hw-list');if(!list)return;
+  if(!hwData.length){list.innerHTML='<div class="card"><div class="empty-msg">No homework assigned yet</div></div>';return;}
+  list.innerHTML=hwData.slice().reverse().map(hw=>{
+    const bStu=students.filter(s=>s.batch===hw.batch);
+    const done=bStu.filter(s=>hw.completions?.[s.id]==='done').length;
+    const total=bStu.length;
+    const pct=total?Math.round(done/total*100):0;
+    const checked=bStu.filter(s=>hw.hwStatus?.[s.id]==='checked').length;
+    const incomplete=bStu.filter(s=>hw.hwStatus?.[s.id]==='incomplete').length;
+    return`<div class="card" style="margin-bottom:12px">
+      <div class="card-hd">
+        <div>
+          <div style="font-weight:500;font-size:13px">${hw.title}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">${hw.subj} · ${hw.batch} · Due: ${hw.due}</div>
+        </div>
+        <div class="fl" style="flex-wrap:wrap;gap:4px">
+          <span class="pill ${pct===100?'p-green':pct>50?'p-amber':'p-red'}">${done}/${total} submitted</span>
+          <span class="pill p-blue">${checked} checked</span>
+          ${incomplete?`<span class="pill p-red">${incomplete} incomplete</span>`:''}
+        </div>
+      </div>
+      <div class="progress"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'#22c55e':pct>50?'#f5a623':'#f43f5e'}"></div></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Student</th><th>Submitted</th><th>Homework Check Status</th></tr></thead>
+        <tbody>
+          ${bStu.map(s=>{
+            const comp=hw.completions?.[s.id]||'pending';
+            const chk=hw.hwStatus?.[s.id]||'pending';
+            return`<tr>
+              <td style="font-weight:500">${s.name}</td>
+              <td><span class="pill ${comp==='done'?'p-green':'p-amber'}" style="cursor:pointer" title="Click to toggle" onclick="toggleSubmit(${hw.id},${s.id})">${comp==='done'?'✓ Done':'⏳ Pending'}</span></td>
+              <td>
+                <button class="hw-status-btn ${hwStatusClass[chk]}" onclick="cycleHWStatus(${hw.id},${s.id})" title="Click to change status">
+                  <span class="hw-dot" style="background:${hwDotColor[chk]}"></span>
+                  ${hwStatusLabel[chk]}
+                </button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSubmit(hwId,sId){
+  const hw=hwData.find(h=>h.id===hwId);
+  if(hw){hw.completions[sId]=hw.completions[sId]==='done'?'pending':'done';persist();renderHWList();}
+}
+
+function cycleHWStatus(hwId,sId){
+  const hw=hwData.find(h=>h.id===hwId);
+  if(hw){
+    const cur=hw.hwStatus?.[sId]||'pending';
+    hw.hwStatus[sId]=hwStatusNext[cur];
+    persist();renderHWList();
+  }
+}
+
+// ═══════════════════════════════════════════
+// WORKSHEETS
+// ═══════════════════════════════════════════
+let selWSFile=null;
+
+function renderWS(){
+  const pg=document.getElementById('page-worksheets');
+  pg.innerHTML=`
+    <div class="g2">
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">Upload Worksheet</div>
+        <div class="fg"><div class="lbl">Title *</div><input type="text" id="ws-title" placeholder="Algebra Practice Set 1, Grammar..."></div>
+        <div class="fg"><div class="lbl">Subject</div>
+          <select id="ws-subj"><option>Mathematics</option><option>Science</option><option>English</option><option>Hindi</option><option>Social Studies</option><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div>
+        <div class="fg"><div class="lbl">Batch / Class</div>
+          <select id="ws-batch"><option value="All Batches">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+        <div class="fg"><div class="lbl">File</div>
+          <div class="upload-zone">
+            <input type="file" id="ws-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="wsFilePicked(event)">
+            <div style="color:var(--txt2);font-size:12px;line-height:1.5">
+              <div style="font-size:20px;margin-bottom:6px">📎</div>
+              <div id="ws-file-lbl">Click or drag file here</div>
+              <div style="font-size:10px;margin-top:4px;opacity:.6">PDF, DOC, JPG, PNG — max 50MB</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-acc" onclick="uploadWS()" style="width:100%;justify-content:center;margin-top:4px">Upload Worksheet</button>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-ttl">Worksheets Library</span>
+          <select id="ws-filter" style="width:150px" onchange="renderWSList()"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select>
+        </div>
+        <div id="ws-list"></div>
+      </div>
+    </div>`;
+  renderWSList();
+}
+
+function wsFilePicked(e){
+  const f=e.target.files[0];
+  if(f){selWSFile=f;const el=document.getElementById('ws-file-lbl');if(el)el.textContent='📎 '+f.name;}
+}
+
+function uploadWS(){
+  const title=document.getElementById('ws-title')?.value.trim();
+  if(!title){notif('Enter worksheet title','#f43f5e');return;}
+  const ext=(selWSFile?.name.split('.').pop()||'PDF').toUpperCase();
+  worksheets.push({id:Date.now(),title,subj:document.getElementById('ws-subj')?.value,batch:document.getElementById('ws-batch')?.value||'All Batches',filename:selWSFile?.name||title+'.pdf',ext,date:today()});
+  selWSFile=null;
+  const fl=document.getElementById('ws-file-lbl');if(fl)fl.textContent='Click or drag file here';
+  const ti=document.getElementById('ws-title');if(ti)ti.value='';
+  persist();renderWSList();notif('✓ Worksheet uploaded');
+  if(activePage==='dashboard')renderDash();
+}
+
+function renderWSList(){
+  const fb=document.getElementById('ws-filter')?.value||'';
+  const list=worksheets.filter(w=>!fb||w.batch===fb||w.batch==='All Batches');
+  const el=document.getElementById('ws-list');if(!el)return;
+  const extColor={'PDF':'#f43f5e','DOC':'#38bdf8','DOCX':'#38bdf8','JPG':'#22c55e','JPEG':'#22c55e','PNG':'#22c55e'};
+  el.innerHTML=list.length?list.map(w=>`
+    <div class="file-item">
+      <div class="file-ico" style="background:${(extColor[w.ext]||'#a78bfa')}22;color:${extColor[w.ext]||'#a78bfa'}">${w.ext}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${w.title}</div>
+        <div style="font-size:11px;color:var(--txt2)">${w.subj} · ${w.batch} · ${w.date}</div>
+      </div>
+      <button class="btn btn-red btn-sm" onclick="delWS(${w.id})">Delete</button>
+    </div>`).join(''):'<div class="empty-msg">No worksheets uploaded yet</div>';
+}
+
+function delWS(id){
+  if(!confirm('Delete this worksheet?'))return;
+  worksheets=worksheets.filter(w=>w.id!==id);persist();renderWSList();notif('Deleted','#f43f5e');
+}
+
+// ═══════════════════════════════════════════
+// WA / SMS ALERTS
+// ═══════════════════════════════════════════
+function renderAlerts(){
+  const pg=document.getElementById('page-alerts');
+  pg.innerHTML=`
+    <div class="g2">
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">Compose & Send Alert</div>
+        <div class="fg"><div class="lbl">Recipients</div>
+          <select id="al-to" onchange="updateALPreview()">
+            <option value="all">All Parents (${students.length} students)</option>
+            <option value="absent">Absent Students' Parents</option>
+            <option value="low">Low Attendance (&lt;75%)</option>
+            <option value="hw">Homework Pending</option>
+          </select>
+        </div>
+        <div class="fg"><div class="lbl">Batch Filter</div>
+          <select id="al-batch" onchange="updateALPreview()"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select>
+        </div>
+        <div class="fg"><div class="lbl">Message Template</div>
+          <select id="al-tpl" onchange="updateALPreview()">
+            <option value="att">Attendance Alert</option>
+            <option value="hw">Homework Reminder</option>
+            <option value="marks">Marks Update</option>
+            <option value="fee">Fee Reminder</option>
+            <option value="custom">Custom Message</option>
+          </select>
+        </div>
+        <div class="fg" id="al-custom-wrap" style="display:none">
+          <div class="lbl">Custom Message</div>
+          <textarea id="al-custom" rows="3" oninput="updateALPreview()" placeholder="Type your message here..."></textarea>
+        </div>
+        <div class="wa-preview" id="al-preview">Select a template to preview message</div>
+        <div class="fl" style="margin-top:14px;gap:8px">
+          <button class="btn btn-wa" onclick="sendAL('wa')" style="flex:1">📲 Send WhatsApp</button>
+          <button class="btn btn-sec" onclick="sendAL('sms')" style="flex:1">📱 Send SMS</button>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--txt2);line-height:1.5">
+          ⚠ WhatsApp requires <b>WhatsApp Business API</b> (Meta). SMS requires <b>Fast2SMS / Twilio</b>. Contact your developer to connect these APIs.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">Message Templates</div>
+        ${Object.entries({att:{label:'Attendance Alert',msg:waMsgs.att},hw:{label:'Homework Reminder',msg:waMsgs.hw},marks:{label:'Marks Update',msg:waMsgs.marks},fee:{label:'Fee Reminder',msg:waMsgs.fee}}).map(([k,v])=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:500;font-size:12px;color:var(--txt);margin-bottom:4px">${v.label}</div>
+            <div style="font-size:11px;color:var(--txt2);line-height:1.5">${v.msg}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  updateALPreview();
+}
+
+function updateALPreview(){
+  const tpl=document.getElementById('al-tpl')?.value||'att';
+  const cw=document.getElementById('al-custom-wrap');
+  if(cw)cw.style.display=tpl==='custom'?'block':'none';
+  const msg=tpl==='custom'?(document.getElementById('al-custom')?.value||''):waMsgs[tpl];
+  const el=document.getElementById('al-preview');if(el)el.textContent=msg||'Type your custom message above';
+}
+
+function sendAL(channel){
+  const tpl=document.getElementById('al-tpl')?.value||'att';
+  const msg=tpl==='custom'?(document.getElementById('al-custom')?.value||''):waMsgs[tpl];
+  if(!msg.trim()){notif('Write a message first','#f43f5e');return;}
+  if(channel==='wa')notif('📲 WhatsApp messages queued! (Requires WhatsApp Business API)','#25d366');
+  else notif('📱 SMS queued! (Requires Fast2SMS / Twilio API)','#38bdf8');
+}
+
+function updateWAMsg(){
+  const tpl=document.getElementById('wa-tpl')?.value||'att';
+  const cw=document.getElementById('wa-custom-wrap');
+  if(cw)cw.style.display=tpl==='custom'?'block':'none';
+  const msg=tpl==='custom'?(document.getElementById('wa-custom-msg')?.value||''):waMsgs[tpl];
+  const el=document.getElementById('wa-msg-preview');if(el)el.textContent=msg;
+}
+function doSendWA(){notif('📲 WhatsApp queued! (Requires WhatsApp Business API)','#25d366');closeModal('modal-wa');}
+function doSendSMS(){notif('📱 SMS queued! (Requires Fast2SMS / Twilio API)','#38bdf8');closeModal('modal-wa');}
+
+// ═══════════════════════════════════════════
+// EXPORT REPORTS
+// ═══════════════════════════════════════════
+function renderExport(){
+  const pg=document.getElementById('page-export');
+  pg.innerHTML=`
+    <div style="margin-bottom:12px;font-size:12px;color:var(--txt2)">Export data as CSV (Excel-compatible) or print as PDF via browser print dialog.</div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">📊 Attendance Report</div>
+        <div class="fg"><div class="lbl">Batch</div><select id="exp-att-batch"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+        <div class="export-row">
+          <button class="btn btn-export" onclick="exportCSV('att')">↓ Export CSV</button>
+          <button class="btn btn-sec" onclick="printReport('att')">🖨 Print / PDF</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">📝 Marks Report</div>
+        <div class="fg"><div class="lbl">Exam</div><select id="exp-marks-exam"><option value="">All Exams</option>${[...new Set(marksData.map(m=>m.exam))].map(e=>`<option>${e}</option>`).join('')}</select></div>
+        <div class="fg"><div class="lbl">Batch</div><select id="exp-marks-batch"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+        <div class="export-row">
+          <button class="btn btn-export" onclick="exportCSV('marks')">↓ Export CSV</button>
+          <button class="btn btn-sec" onclick="printReport('marks')">🖨 Print / PDF</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">📋 Homework Report</div>
+        <div class="fg"><div class="lbl">Batch</div><select id="exp-hw-batch"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+        <div class="export-row">
+          <button class="btn btn-export" onclick="exportCSV('hw')">↓ Export CSV</button>
+          <button class="btn btn-sec" onclick="printReport('hw')">🖨 Print / PDF</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-ttl" style="margin-bottom:12px">👥 Student List</div>
+        <div class="fg"><div class="lbl">Batch</div><select id="exp-stu-batch"><option value="">All Batches</option>${batches.map(b=>`<option>${b}</option>`).join('')}</select></div>
+        <div class="export-row">
+          <button class="btn btn-export" onclick="exportCSV('students')">↓ Export CSV</button>
+          <button class="btn btn-sec" onclick="printReport('students')">🖨 Print / PDF</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function exportCSV(type){
+  let rows=[],headers=[];
+  const fb=(document.getElementById('exp-'+type+'-batch')||document.getElementById('exp-att-batch'))?.value||'';
+  if(type==='att'){
+    headers=['Student','Batch','Total Classes','Present','Absent','Attendance %'];
+    students.filter(s=>!fb||s.batch===fb).forEach(s=>{
+      const r=attData.filter(a=>a.sid===s.id);const tot=r.length;const pres=r.filter(a=>a.status==='P').length;
+      rows.push([s.name,s.batch,tot,pres,tot-pres,tot?Math.round(pres/tot*100)+'%':'0%']);
+    });
+  } else if(type==='marks'){
+    const fe=document.getElementById('exp-marks-exam')?.value||'';
+    headers=['Student','Batch','Exam','Subject','Marks','Total','%','Grade'];
+    marksData.filter(m=>(!fb||m.batch===fb)&&(!fe||m.exam===fe)).forEach(m=>{
+      const pct=Math.round(m.marks/m.total*100);const{g}=getGrade(pct);
+      rows.push([m.sname,m.batch,m.exam,m.subj,m.marks,m.total,pct+'%',g]);
+    });
+  } else if(type==='hw'){
+    headers=['Student','Batch','Assignment','Subject','Due','Submitted','HW Check Status'];
+    hwData.filter(h=>!fb||h.batch===fb).forEach(hw=>{
+      students.filter(s=>s.batch===hw.batch).forEach(s=>{
+        rows.push([s.name,s.batch,hw.title,hw.subj,hw.due,hw.completions?.[s.id]==='done'?'Yes':'No',hwStatusLabel[hw.hwStatus?.[s.id]||'pending'].replace(/[✓⊘✗—]/g,'').trim()]);
+      });
+    });
+  } else {
+    headers=['Name','Roll No.','Batch','Subject Group','Parent Phone'];
+    students.filter(s=>!fb||s.batch===fb).forEach(s=>rows.push([s.name,s.roll,s.batch,s.subj,s.phone]));
+  }
+  const csv=[headers,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='EduCoach_'+type+'_report_'+today().replace(/\//g,'-')+'.csv';
+  a.click();notif('✓ CSV downloaded');
+}
+
+function printReport(type){
+  const fb=(document.getElementById('exp-'+type+'-batch')||document.getElementById('exp-att-batch'))?.value||'';
+  let tableHTML='',title='';
+  if(type==='att'){
+    title='Attendance Report';
+    tableHTML='<table><tr><th>Student</th><th>Batch</th><th>Total</th><th>Present</th><th>Absent</th><th>%</th><th>Status</th></tr>';
+    students.filter(s=>!fb||s.batch===fb).forEach(s=>{
+      const r=attData.filter(a=>a.sid===s.id);const tot=r.length;const pres=r.filter(a=>a.status==='P').length;
+      const pct=tot?Math.round(pres/tot*100):0;
+      tableHTML+=`<tr><td>${s.name}</td><td>${s.batch}</td><td>${tot}</td><td>${pres}</td><td>${tot-pres}</td><td>${pct}%</td><td>${pct>=75?'Regular':pct>=60?'At Risk':'Low'}</td></tr>`;
+    });
+    tableHTML+='</table>';
+  } else if(type==='marks'){
+    title='Marks Report';
+    tableHTML='<table><tr><th>Student</th><th>Batch</th><th>Exam</th><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr>';
+    marksData.filter(m=>(!fb||m.batch===fb)).forEach(m=>{const pct=Math.round(m.marks/m.total*100);const{g}=getGrade(pct);tableHTML+=`<tr><td>${m.sname}</td><td>${m.batch}</td><td>${m.exam}</td><td>${m.subj}</td><td>${m.marks}/${m.total}</td><td>${pct}%</td><td>${g}</td></tr>`;});
+    tableHTML+='</table>';
+  } else if(type==='hw'){
+    title='Homework Report';
+    tableHTML='<table><tr><th>Student</th><th>Batch</th><th>Assignment</th><th>Subject</th><th>Submitted</th><th>Check Status</th></tr>';
+    hwData.filter(h=>!fb||h.batch===fb).forEach(hw=>students.filter(s=>s.batch===hw.batch).forEach(s=>{tableHTML+=`<tr><td>${s.name}</td><td>${s.batch}</td><td>${hw.title}</td><td>${hw.subj}</td><td>${hw.completions?.[s.id]==='done'?'Yes':'No'}</td><td>${(hwStatusLabel[hw.hwStatus?.[s.id]||'pending']||'').replace(/[✓⊘✗—]/g,'').trim()}</td></tr>`;}));
+    tableHTML+='</table>';
+  } else {
+    title='Student List';
+    tableHTML='<table><tr><th>Name</th><th>Roll</th><th>Batch</th><th>Subject Group</th><th>Phone</th></tr>';
+    students.filter(s=>!fb||s.batch===fb).forEach(s=>{tableHTML+=`<tr><td>${s.name}</td><td>${s.roll}</td><td>${s.batch}</td><td>${s.subj}</td><td>${s.phone}</td></tr>`;});
+    tableHTML+='</table>';
+  }
+  const html=`<!DOCTYPE html><html><head><title>${title} — EduCoach Pro</title>
+  <style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#222}
+  h2{margin-bottom:4px}p{color:#666;margin-bottom:16px;font-size:11px}
+  table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:7px 10px;text-align:left}
+  th{background:#f4f4f4;font-weight:600}tr:nth-child(even){background:#fafafa}
+  @media print{button{display:none}}</style></head>
+  <body><h2>🎓 EduCoach Pro — ${title}</h2><p>Generated: ${today()}</p>
+  ${tableHTML}<br><button onclick="window.print()">🖨 Print this page</button></body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+  else notif('Allow popups to open print window','#f43f5e');
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderApp();
+</script>
+</body>
+</html>
